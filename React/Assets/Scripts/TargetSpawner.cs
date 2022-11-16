@@ -12,10 +12,16 @@ public class TargetSpawner : MonoBehaviour
         instance = this;
     }
 
-    public void Spawn(Target target)
+    public TargetDisplay Spawn(Target target)
     {
         TargetDisplay targetInstance = Instantiate(targetPrefab, GetValidSpawn(), Quaternion.identity, transform);
         targetInstance.SetTarget(target);
+        return targetInstance;
+    }
+
+    public void DestroyTargets()
+    {
+        foreach (Transform child in transform) Destroy(child.gameObject);
     }
 
     private Vector2 GetValidSpawn()

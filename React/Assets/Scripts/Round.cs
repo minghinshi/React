@@ -1,26 +1,45 @@
 public class Round
 {
     private Target correctTarget;
+    private float timeLimit;
+    private int spawnCount;
 
-    public Round()
+    public Round(float timeLimit, int spawnCount)
     {
         correctTarget = Target.GetTarget();
+        this.timeLimit = timeLimit;
+        this.spawnCount = spawnCount;
+
         GameInterface.instance.CorrectTargetDisplay.SetTarget(correctTarget);
-        GameInterface.instance.Countdown.CountdownFinished += GenerateTargets;
+        GameInterface.instance.Countdown.CountdownFinished += StartRound;
     }
 
-    public void EndRound()
+    private void StartRound()
     {
-        GameInterface.instance.Countdown.CountdownFinished -= GenerateTargets;
+        GenerateTargets();
+        GameInterface.instance.VisualTimer.StartTimer(timeLimit);
+        GameInterface.instance.Countdown.CountdownFinished -= StartRound;
     }
 
     private void GenerateTargets()
     {
-        TargetSpawner.instance.Spawn(correctTarget);
-        for (int i = 0; i < 30; i++)
+        GenerateTarget(correctTarget);
+        for (int i = 0; i < spawnCount - 1; i++)
         {
             Target incorrectTarget = Target.GetWrongTarget(correctTarget);
-            TargetSpawner.instance.Spawn(incorrectTarget);
+            GenerateTarget(incorrectTarget);
         }
+    }
+
+    private void GenerateTarget(Target target)
+    {
+        TargetDisplay targetInstance = TargetSpawner.instance.Spawn(target);
+        targetInstance.SetClickAction(() => SubmitAnswer(target));
+    }
+
+    private void SubmitAnswer(Target target)
+    {
+        TargetSpawner.instance.DestroyTargets();
+        GameInterface.instance.VisualTimer.StopTimer();
     }
 }

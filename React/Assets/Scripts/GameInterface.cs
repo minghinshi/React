@@ -8,6 +8,7 @@ public class GameInterface : MonoBehaviour
 
     public Countdown Countdown;
     public TargetDisplay CorrectTargetDisplay;
+    public VisualTimer VisualTimer;
 
     private void Awake()
     {

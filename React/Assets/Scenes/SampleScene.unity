@@ -1554,6 +1554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 472775890}
   - component: {fileID: 472775891}
+  - component: {fileID: 472775892}
   m_Layer: 5
   m_Name: Timer
   m_TagString: Untagged
@@ -1634,6 +1635,18 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &472775892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472775889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c459190d27554241b61d2463313cba3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -4107,6 +4120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Countdown: {fileID: 167120201}
   CorrectTargetDisplay: {fileID: 2141356152}
+  VisualTimer: {fileID: 472775892}
 --- !u!1 &1394363453
 GameObject:
   m_ObjectHideFlags: 0
