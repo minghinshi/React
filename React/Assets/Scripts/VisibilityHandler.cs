@@ -17,6 +17,7 @@ public class VisibilityHandler : MonoBehaviour
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+        layoutElement = GetComponent<LayoutElement>();
     }
 
     private void Update()
