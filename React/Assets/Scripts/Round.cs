@@ -1,11 +1,20 @@
+public enum RoundResult
+{
+    Correct,
+    TimedOut,
+    Incorrect
+}
+
 public class Round
 {
     private Target correctTarget;
     private float timeLimit;
     private int spawnCount;
 
-    public delegate void RoundCompletedHandler(bool isCorrect);
+    public delegate void RoundCompletedHandler(RoundResult result);
     public event RoundCompletedHandler RoundCompleted;
+
+    private readonly GameInterface UI = GameInterface.instance;
 
     public Round(float timeLimit, int spawnCount)
     {
@@ -13,15 +22,23 @@ public class Round
         this.timeLimit = timeLimit;
         this.spawnCount = spawnCount;
 
-        GameInterface.instance.CorrectTargetDisplay.SetTarget(correctTarget);
-        GameInterface.instance.Countdown.CountdownFinished += StartRound;
+        UI.CorrectTargetDisplay.SetTarget(correctTarget);
+        UI.Countdown.CountdownFinished += StartRound;
     }
 
     private void StartRound()
     {
         GenerateTargets();
-        GameInterface.instance.VisualTimer.StartTimer(timeLimit);
-        GameInterface.instance.Countdown.CountdownFinished -= StartRound;
+        UI.VisualTimer.StartTimer(timeLimit);
+        UI.Countdown.CountdownFinished -= StartRound;
+        UI.VisualTimer.TimerEnded += TimeOut;
+    }
+
+    private void EndRound()
+    {
+        TargetSpawner.instance.DestroyTargets();
+        UI.VisualTimer.StopTimer();
+        UI.VisualTimer.TimerEnded -= TimeOut;
     }
 
     private void GenerateTargets()
@@ -42,8 +59,14 @@ public class Round
 
     private void SubmitAnswer(Target target)
     {
-        TargetSpawner.instance.DestroyTargets();
-        GameInterface.instance.VisualTimer.StopTimer();
-        RoundCompleted?.Invoke(target.Equals(correctTarget));
+        EndRound();
+        if (target.Equals(correctTarget)) RoundCompleted?.Invoke(RoundResult.Correct);
+        else RoundCompleted?.Invoke(RoundResult.Incorrect);
+    }
+
+    private void TimeOut()
+    {
+        EndRound();
+        RoundCompleted?.Invoke(RoundResult.TimedOut);
     }
 }

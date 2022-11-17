@@ -2,12 +2,13 @@ using UnityEngine;
 
 public class Game
 {
-    private int score = 0;
-    private int lives = 3;
-    private int level = 0;
+    private int score;
+    private int lives;
+    private int level;
 
     private Difficulty difficulty;
     private Round currentRound;
+    private readonly GameInterface UI = GameInterface.instance;
 
     public int Score
     {
@@ -15,41 +16,97 @@ public class Game
         set
         {
             score = value;
-            GameInterface.instance.ScoreDisplay.text = value.ToString();
+            UI.ScoreDisplay.text = value.ToString();
+            UI.UpdateInGameRecordDisplay(value);
+        }
+    }
+
+    public int Lives
+    {
+        get => lives;
+        set
+        {
+            lives = value;
+            UI.livesDisplay.ShowLives(value);
         }
     }
 
     public Game()
     {
         GenerateNewRound();
-        GameInterface.instance.NextRoundButton.onClick.AddListener(GenerateNewRound);
+        Score = 0;
+        Lives = 3;
+        UI.RoundResultDisplay.BindButtonToGame(ContinueGame);
+    }
+
+    private void ContinueGame()
+    {
+        if (Lives == 0) EndGame();
+        else GenerateNewRound();
+    }
+
+    private void EndGame()
+    {
+        UI.GameOverDisplay.ShowGameResults(Score);
+        RecordsHandler.records.UpdateRecord(Score);
     }
 
     private void GenerateNewRound()
     {
-        currentRound = new(3f, 5);
+        currentRound = new(GetRoundTime(), level + 3);
         currentRound.RoundCompleted += OnRoundCompleted;
-        GameInterface.instance.RoundResult.SetInvisibleImmediately();
-        GameInterface.instance.RoundIntro.SetVisibleImmediately();
+        UI.GameplayInfoPanels.SwitchPanel(UI.RoundIntro);
     }
 
-    private void OnRoundCompleted(bool isCorrect)
+    private void OnRoundCompleted(RoundResult roundResult)
     {
-        if (isCorrect) AddScore();
+        EvaluateResult(roundResult);
         currentRound.RoundCompleted -= OnRoundCompleted;
-        GameInterface.instance.RoundResult.SetVisibleImmediately();
-
-    }
-
-    private void AddScore()
-    {
-        int addedScore = GetAddedScore();
-        Score += addedScore;
-        GameInterface.instance.RoundResultText.text = string.Format("+{0} Points", addedScore);
     }
 
     private int GetAddedScore()
     {
         return Mathf.CeilToInt(GameInterface.instance.VisualTimer.GetPercentage() * 10f);
+    }
+
+    private void EvaluateResult(RoundResult roundResult)
+    {
+        switch (roundResult)
+        {
+            case RoundResult.Correct:
+                OnCorrectAnswer();
+                break;
+            case RoundResult.Incorrect:
+                OnIncorrectAnswer();
+                break;
+            case RoundResult.TimedOut:
+                OnTimeOut();
+                break;
+        }
+    }
+
+    private void OnCorrectAnswer()
+    {
+        int addedScore = GetAddedScore();
+        Score += addedScore;
+        level++;
+        UI.RoundResultDisplay.DisplayCorrect(addedScore);
+    }
+
+    private void OnIncorrectAnswer()
+    {
+        Lives--;
+        UI.RoundResultDisplay.DisplayIncorrect();
+    }
+
+    private void OnTimeOut()
+    {
+        Lives--;
+        UI.RoundResultDisplay.DisplayOutOfTime();
+    }
+
+    private float GetRoundTime()
+    {
+        return 60f / Mathf.Pow(1 + level * 0.414f, 2);
     }
 }

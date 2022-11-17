@@ -15,7 +15,7 @@ public class PanelSwitcher : MonoBehaviour
     public void SwitchPanel(VisibilityHandler panel)
     {
         if (current == panel) return;
-        HidePanel(current);
+        if (current != null) HidePanel(current);
         ShowPanel(panel);
     }
 
