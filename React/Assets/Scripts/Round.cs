@@ -4,6 +4,9 @@ public class Round
     private float timeLimit;
     private int spawnCount;
 
+    public delegate void RoundCompletedHandler(bool isCorrect);
+    public event RoundCompletedHandler RoundCompleted;
+
     public Round(float timeLimit, int spawnCount)
     {
         correctTarget = Target.GetTarget();
@@ -41,5 +44,6 @@ public class Round
     {
         TargetSpawner.instance.DestroyTargets();
         GameInterface.instance.VisualTimer.StopTimer();
+        RoundCompleted?.Invoke(target.Equals(correctTarget));
     }
 }

@@ -46,6 +46,11 @@ public class VisualTimer : MonoBehaviour
         isEnabled = false;
     }
 
+    public float GetPercentage()
+    {
+        return timeLeft / length;
+    }
+
     private void EndTimer()
     {
         TimerEnded?.Invoke();
@@ -55,10 +60,5 @@ public class VisualTimer : MonoBehaviour
     private void UpdateSlider()
     {
         timerSlider.value = GetPercentage();
-    }
-
-    private float GetPercentage()
-    {
-        return timeLeft / length;
     }
 }

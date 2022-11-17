@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameInterface : MonoBehaviour
 {
@@ -9,6 +9,14 @@ public class GameInterface : MonoBehaviour
     public Countdown Countdown;
     public TargetDisplay CorrectTargetDisplay;
     public VisualTimer VisualTimer;
+
+    public VisibilityHandler RoundIntro;
+    public VisibilityHandler RoundResult;
+
+    public TMP_Text ScoreDisplay;
+    public TMP_Text RoundResultText;
+
+    public Button NextRoundButton;
 
     private void Awake()
     {
