@@ -3,17 +3,19 @@ using UnityEngine;
 
 public class Countdown : MonoBehaviour
 {
+    public static Countdown instance;
+
     private TMP_Text text;
     private int countsLeft = 0;
     private float timeLeft = 1f;
+    private bool isStopped = false;
 
-    public int CountsLeft
+    private int CountsLeft
     {
         get => countsLeft;
         set
         {
             countsLeft = value;
-            if (countsLeft == 0) CountdownFinished?.Invoke();
             text.text = countsLeft.ToString();
         }
     }
@@ -34,18 +36,32 @@ public class Countdown : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
         text = GetComponent<TMP_Text>();
     }
 
     private void Update()
     {
-        if (CountsLeft > 0) TimeLeft -= Time.deltaTime;
+        if (CountsLeft > 0 && !isStopped) TimeLeft -= Time.deltaTime;
+    }
+
+    public void CountDown(int count)
+    {
+        CountsLeft = count;
+        timeLeft = 1f;
+        isStopped = false;
+    }
+
+    public void Terminate()
+    {
+        isStopped = true;
     }
 
     private void DecreaseCount()
     {
         TimeLeft += 1f;
         CountsLeft--;
+        if (CountsLeft == 0) CountdownFinished?.Invoke();
     }
 
     private void SetTextColor()

@@ -5,9 +5,18 @@ public enum RoundResult
     Incorrect
 }
 
+public enum RoundStatus
+{
+    Inactive,
+    Countdown,
+    Running,
+}
+
 public class Round
 {
-    private Target correctTarget;
+    private RoundStatus status = RoundStatus.Inactive;
+    private Target correctTarget = Target.GetTarget();
+
     private float timeLimit;
     private int spawnCount;
 
@@ -18,27 +27,62 @@ public class Round
 
     public Round(float timeLimit, int spawnCount)
     {
-        correctTarget = Target.GetTarget();
         this.timeLimit = timeLimit;
         this.spawnCount = spawnCount;
 
         UI.CorrectTargetDisplay.SetTarget(correctTarget);
+    }
+
+    public void StartCountdown()
+    {
+        status = RoundStatus.Countdown;
+        Countdown.instance.CountDown(3);
+        UI.RoundIntro.SetInvisibleImmediately();
         UI.Countdown.CountdownFinished += StartRound;
     }
 
     private void StartRound()
     {
+        status = RoundStatus.Running;
         GenerateTargets();
-        UI.VisualTimer.StartTimer(timeLimit);
+        UI.Timer.StartTimer(timeLimit);
         UI.Countdown.CountdownFinished -= StartRound;
-        UI.VisualTimer.TimerEnded += TimeOut;
+        UI.Timer.TimerEnded += TimeOut;
     }
 
     private void EndRound()
     {
+        status = RoundStatus.Inactive;
         TargetSpawner.instance.DestroyTargets();
-        UI.VisualTimer.StopTimer();
-        UI.VisualTimer.TimerEnded -= TimeOut;
+        UI.Timer.PauseTimer();
+        UI.Timer.TimerEnded -= TimeOut;
+    }
+
+    public void Pause()
+    {
+        
+        if (status == RoundStatus.Countdown)
+            UI.Countdown.Terminate();
+        else if (status == RoundStatus.Running)
+            UI.Timer.PauseTimer();
+    }
+
+    public void Continue()
+    {
+        if (status == RoundStatus.Countdown || status == RoundStatus.Running)
+            UI.Countdown.CountDown(3);
+        if (status == RoundStatus.Running)
+        {
+            TargetSpawner.instance.HideAllTargets();
+            UI.Countdown.CountdownFinished += Restart;
+        }
+    }
+
+    private void Restart()
+    {
+        TargetSpawner.instance.ShowAllTargets();
+        UI.Timer.ContinueTimer();
+        UI.Countdown.CountdownFinished -= Restart;
     }
 
     private void GenerateTargets()

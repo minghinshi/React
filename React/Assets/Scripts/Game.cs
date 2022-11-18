@@ -31,6 +31,8 @@ public class Game
         }
     }
 
+    public Round Round { get => currentRound; }
+
     public Game()
     {
         GenerateNewRound();
@@ -66,7 +68,7 @@ public class Game
 
     private int GetAddedScore()
     {
-        return Mathf.CeilToInt(GameInterface.instance.VisualTimer.GetPercentage() * 10f);
+        return Mathf.CeilToInt(GameInterface.instance.Timer.GetPercentage() * 10f);
     }
 
     private void EvaluateResult(RoundResult roundResult)
@@ -107,6 +109,6 @@ public class Game
 
     private float GetRoundTime()
     {
-        return 60f / Mathf.Pow(1 + level * 0.414f, 2);
+        return 10f / Mathf.Pow(1 + level * 0.414f, 2);
     }
 }

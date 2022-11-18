@@ -53,7 +53,8 @@ public class RoundResultDisplay : MonoBehaviour
         ShowScreen();
     }
 
-    private void ShowScreen() {
+    private void ShowScreen()
+    {
         GameInterface.instance.GameplayInfoPanels.SwitchPanel(visibilityHandler);
     }
 }

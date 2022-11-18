@@ -19,6 +19,16 @@ public class TargetSpawner : MonoBehaviour
         return targetInstance;
     }
 
+    public void ShowAllTargets()
+    {
+        foreach (Transform child in transform) child.gameObject.SetActive(true);
+    }
+
+    public void HideAllTargets()
+    {
+        foreach (Transform child in transform) child.gameObject.SetActive(false);
+    }
+
     public void DestroyTargets()
     {
         foreach (Transform child in transform) Destroy(child.gameObject);

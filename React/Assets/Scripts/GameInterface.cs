@@ -6,7 +6,7 @@ public class GameInterface : MonoBehaviour
     public static GameInterface instance;
 
     public Countdown Countdown;
-    public VisualTimer VisualTimer;
+    public GameTimer Timer;
     public TargetDisplay CorrectTargetDisplay;
     public LivesDisplay livesDisplay;
     public RoundResultDisplay RoundResultDisplay;
@@ -14,6 +14,7 @@ public class GameInterface : MonoBehaviour
 
     public VisibilityHandler RoundIntro;
     public VisibilityHandler GameplayScreen;
+    public VisibilityHandler PauseScreen;
 
     public PanelSwitcher MainPanels;
     public PanelSwitcher GameplayInfoPanels;

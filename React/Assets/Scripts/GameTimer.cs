@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Slider))]
-public class VisualTimer : MonoBehaviour
+public class GameTimer : MonoBehaviour
 {
     private float length;
     private float timeLeft;
@@ -41,9 +41,13 @@ public class VisualTimer : MonoBehaviour
         isEnabled = true;
     }
 
-    public void StopTimer()
+    public void PauseTimer()
     {
         isEnabled = false;
+    }
+
+    public void ContinueTimer() {
+        isEnabled = true;
     }
 
     public float GetPercentage()
