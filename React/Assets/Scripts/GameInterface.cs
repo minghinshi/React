@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -7,12 +8,13 @@ public class GameInterface : MonoBehaviour
 
     public Countdown Countdown;
     public GameTimer Timer;
-    public TargetDisplay CorrectTargetDisplay;
+    public ClickableTarget CorrectTargetDisplay;
     public LivesDisplay livesDisplay;
     public RoundResultDisplay RoundResultDisplay;
     public GameOverDisplay GameOverDisplay;
 
     public VisibilityHandler RoundIntro;
+    public VisibilityHandler MainMenu;
     public VisibilityHandler GameplayScreen;
     public VisibilityHandler PauseScreen;
 
@@ -22,14 +24,18 @@ public class GameInterface : MonoBehaviour
     public TMP_Text ScoreDisplay;
     public TMP_Text RecordDisplay;
 
+    //Ugly hack
+    public List<Difficulty> Difficulties;
+    public List<TMP_Text> MenuScoreDisplays;
+
     private void Awake()
     {
         instance = this;
     }
 
-    public void UpdateInGameRecordDisplay(int score)
+    public void UpdateInGameRecordDisplay(Difficulty difficulty, int score)
     {
-        int highScore = RecordsHandler.records.GetHighestScore();
+        int highScore = RecordsHandler.records.GetHighestScore(difficulty);
         if (score > highScore)
         {
             RecordDisplay.color = new Color32(0xfb, 0xc0, 0x2d, 0xff);
@@ -39,6 +45,15 @@ public class GameInterface : MonoBehaviour
         {
             RecordDisplay.color = new Color(0f, 0f, 0f, 0.87f);
             RecordDisplay.text = string.Format("Best: {0}", highScore);
+        }
+    }
+
+    public void UpdateMenuScoreDisplay()
+    {
+        for (int i = 0; i < Difficulties.Count; i++)
+        {
+            int score = RecordsHandler.records.GetHighestScore(Difficulties[i]);
+            MenuScoreDisplays[i].text = string.Format("Best: {0}", score);
         }
     }
 }

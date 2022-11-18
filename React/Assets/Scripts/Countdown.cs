@@ -55,6 +55,7 @@ public class Countdown : MonoBehaviour
     public void Terminate()
     {
         isStopped = true;
+        text.color = new Color(0f, 0f, 0f, 0f);
     }
 
     private void DecreaseCount()

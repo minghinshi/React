@@ -1,16 +1,22 @@
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class Records
 {
-    [JsonProperty] private int highestScore = 0;
+    [JsonProperty]
+    private readonly Dictionary<string, int> highestScores = new();
 
-    public int GetHighestScore()
+    public int GetHighestScore(Difficulty difficulty)
     {
-        return highestScore;
+        return highestScores.GetValueOrDefault(difficulty.name, 0);
     }
 
-    public void UpdateRecord(int score)
+    public void UpdateRecord(Difficulty difficulty, int score)
     {
-        if (score > highestScore) highestScore = score;
+        if (score > GetHighestScore(difficulty))
+        {
+            highestScores[difficulty.name] = score;
+            GameInterface.instance.UpdateMenuScoreDisplay();
+        }
     }
 }

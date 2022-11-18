@@ -15,7 +15,7 @@ public enum RoundStatus
 public class Round
 {
     private RoundStatus status = RoundStatus.Inactive;
-    private Target correctTarget = Target.GetTarget();
+    private Target correctTarget = TargetFactory.instance.GetTarget();
 
     private float timeLimit;
     private int spawnCount;
@@ -30,6 +30,7 @@ public class Round
         this.timeLimit = timeLimit;
         this.spawnCount = spawnCount;
 
+        UI.GameplayInfoPanels.SwitchPanel(UI.RoundIntro);
         UI.CorrectTargetDisplay.SetTarget(correctTarget);
     }
 
@@ -37,7 +38,7 @@ public class Round
     {
         status = RoundStatus.Countdown;
         Countdown.instance.CountDown(3);
-        UI.RoundIntro.SetInvisibleImmediately();
+        UI.GameplayInfoPanels.TogglePanel(UI.RoundIntro);
         UI.Countdown.CountdownFinished += StartRound;
     }
 
@@ -53,14 +54,22 @@ public class Round
     private void EndRound()
     {
         status = RoundStatus.Inactive;
-        TargetSpawner.instance.DestroyTargets();
         UI.Timer.PauseTimer();
         UI.Timer.TimerEnded -= TimeOut;
+        TargetManager.instance.DestroyTargets();
+    }
+
+    public void ForceEndRound()
+    {
+        UI.Countdown.CountdownFinished -= StartRound;
+        UI.Countdown.CountdownFinished -= Restart;
+        UI.Timer.TimerEnded -= TimeOut;
+        TargetManager.instance.DestroyTargets();
     }
 
     public void Pause()
     {
-        
+
         if (status == RoundStatus.Countdown)
             UI.Countdown.Terminate();
         else if (status == RoundStatus.Running)
@@ -73,14 +82,14 @@ public class Round
             UI.Countdown.CountDown(3);
         if (status == RoundStatus.Running)
         {
-            TargetSpawner.instance.HideAllTargets();
+            TargetManager.instance.HideAllTargets();
             UI.Countdown.CountdownFinished += Restart;
         }
     }
 
     private void Restart()
     {
-        TargetSpawner.instance.ShowAllTargets();
+        TargetManager.instance.ShowAllTargets();
         UI.Timer.ContinueTimer();
         UI.Countdown.CountdownFinished -= Restart;
     }
@@ -90,14 +99,14 @@ public class Round
         GenerateTarget(correctTarget);
         for (int i = 0; i < spawnCount - 1; i++)
         {
-            Target incorrectTarget = Target.GetWrongTarget(correctTarget);
+            Target incorrectTarget = TargetFactory.instance.GetWrongTarget(correctTarget);
             GenerateTarget(incorrectTarget);
         }
     }
 
     private void GenerateTarget(Target target)
     {
-        TargetDisplay targetInstance = TargetSpawner.instance.Spawn(target);
+        ClickableTarget targetInstance = TargetManager.instance.Spawn(target);
         targetInstance.SetClickAction(() => SubmitAnswer(target));
     }
 

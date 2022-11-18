@@ -1,21 +1,30 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class TargetSpawner : MonoBehaviour
+public class TargetManager : MonoBehaviour
 {
-    public static TargetSpawner instance;
+    public static TargetManager instance;
 
-    public TargetDisplay targetPrefab;
-    public const int MaxSpawningAttempts = 10;
+    [SerializeField] 
+    private ClickableTarget targetPrefab;
+    private Difficulty difficulty;
 
     private void Awake()
     {
         instance = this;
     }
 
-    public TargetDisplay Spawn(Target target)
+    public void SetDifficulty(Difficulty difficulty)
     {
-        TargetDisplay targetInstance = Instantiate(targetPrefab, GetValidSpawn(), Quaternion.identity, transform);
+        this.difficulty = difficulty;
+    }
+
+    public ClickableTarget Spawn(Target target)
+    {
+        ClickableTarget targetInstance = Instantiate(targetPrefab, GetValidSpawn(), Quaternion.identity, transform);
         targetInstance.SetTarget(target);
+        if (difficulty.targetMoves) targetInstance.SetRandomVelocity();
+        if (difficulty.targetRotates) targetInstance.SetRandomRotation();
         return targetInstance;
     }
 

@@ -1,18 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class ClickableObject : MonoBehaviour
+public class ClickableTarget : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Target target;
+
+    [SerializeField] private Image ballImage;
+    [SerializeField] private Image modifierImage;
+    [SerializeField] private TMP_Text text;
+    [SerializeField] private Button button;
+
+    private new Rigidbody2D rigidbody;
+
+    private void Awake()
     {
-        
+        rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetTarget(Target target)
     {
-        
+        this.target = target;
+        ballImage.color = target.GetColor();
+        modifierImage.sprite = target.GetSprite();
+        text.text = target.GetText();
+    }
+
+    public void SetClickAction(UnityAction unityAction)
+    {
+        button.onClick.AddListener(unityAction);
+    }
+
+    public void SetRandomVelocity()
+    {
+        rigidbody.velocity = Random.insideUnitCircle.normalized * Random.Range(250f, 500f);
+    }
+
+    public void SetRandomRotation()
+    {
+        rigidbody.angularVelocity = Random.Range(-90f, 90f);
+        rigidbody.rotation = Random.Range(-180f, 180f);
     }
 }

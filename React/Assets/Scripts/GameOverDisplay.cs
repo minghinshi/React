@@ -16,13 +16,13 @@ public class GameOverDisplay : MonoBehaviour
     public void ShowGameResults(int score)
     {
         scoreDisplay.text = string.Format("{0} Points", score);
-        DisplayRecord(score);
+        DisplayRecord(GameHandler.currentGame.Difficulty, score);
         GameInterface.instance.MainPanels.SwitchPanel(visibilityHandler);
     }
 
-    public void DisplayRecord(int score)
+    public void DisplayRecord(Difficulty difficulty, int score)
     {
-        int highScore = RecordsHandler.records.GetHighestScore();
+        int highScore = RecordsHandler.records.GetHighestScore(difficulty);
         int difference = score - highScore;
         if (score > highScore)
         {

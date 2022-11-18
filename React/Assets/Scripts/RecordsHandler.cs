@@ -26,6 +26,7 @@ public class RecordsHandler : MonoBehaviour
     {
         bool hasSaveFile = File.Exists(GetSaveFilePath());
         records = hasSaveFile ? GetRecords() : new();
+        GameInterface.instance.UpdateMenuScoreDisplay();
     }
 
     private string GetDataPath()

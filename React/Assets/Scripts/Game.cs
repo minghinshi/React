@@ -17,7 +17,7 @@ public class Game
         {
             score = value;
             UI.ScoreDisplay.text = value.ToString();
-            UI.UpdateInGameRecordDisplay(value);
+            UI.UpdateInGameRecordDisplay(difficulty, value);
         }
     }
 
@@ -32,12 +32,14 @@ public class Game
     }
 
     public Round Round { get => currentRound; }
+    public Difficulty Difficulty { get => difficulty; }
 
-    public Game()
+    public Game(Difficulty difficulty)
     {
-        GenerateNewRound();
+        this.difficulty = difficulty;
         Score = 0;
         Lives = 3;
+        GenerateNewRound();
         UI.RoundResultDisplay.BindButtonToGame(ContinueGame);
     }
 
@@ -50,14 +52,19 @@ public class Game
     private void EndGame()
     {
         UI.GameOverDisplay.ShowGameResults(Score);
-        RecordsHandler.records.UpdateRecord(Score);
+        RecordsHandler.records.UpdateRecord(difficulty, Score);
+    }
+
+    public void ForceEndGame()
+    {
+        currentRound.RoundCompleted -= OnRoundCompleted;
+        currentRound.ForceEndRound();
     }
 
     private void GenerateNewRound()
     {
-        currentRound = new(GetRoundTime(), level + 3);
+        currentRound = new(GetRoundTime(), level + difficulty.startingCount);
         currentRound.RoundCompleted += OnRoundCompleted;
-        UI.GameplayInfoPanels.SwitchPanel(UI.RoundIntro);
     }
 
     private void OnRoundCompleted(RoundResult roundResult)
@@ -109,6 +116,6 @@ public class Game
 
     private float GetRoundTime()
     {
-        return 10f / Mathf.Pow(1 + level * 0.414f, 2);
+        return 60f / Mathf.Pow(1 + level * 0.414f, 2);
     }
 }

@@ -9,6 +9,8 @@ public class GameTimer : MonoBehaviour
     private bool isEnabled;
 
     private Slider timerSlider;
+    private Image image;
+    private VisibilityHandler visibilityHandler;
 
     public delegate void TimerEndedHandler();
     public event TimerEndedHandler TimerEnded;
@@ -27,6 +29,8 @@ public class GameTimer : MonoBehaviour
     private void Awake()
     {
         timerSlider = GetComponent<Slider>();
+        image = GetComponentInChildren<Image>();
+        visibilityHandler = GetComponent<VisibilityHandler>();
     }
 
     private void Update()
@@ -38,16 +42,19 @@ public class GameTimer : MonoBehaviour
     {
         this.length = length;
         TimeLeft = length;
-        isEnabled = true;
+        ContinueTimer();
     }
 
     public void PauseTimer()
     {
         isEnabled = false;
+        visibilityHandler.SetInvisibleImmediately();
     }
 
-    public void ContinueTimer() {
+    public void ContinueTimer()
+    {
         isEnabled = true;
+        visibilityHandler.SetVisibleImmediately();
     }
 
     public float GetPercentage()
@@ -58,11 +65,17 @@ public class GameTimer : MonoBehaviour
     private void EndTimer()
     {
         TimerEnded?.Invoke();
-        isEnabled = false;
+        PauseTimer();
     }
 
     private void UpdateSlider()
     {
         timerSlider.value = GetPercentage();
+        image.color = GetColor();
+    }
+
+    private Color GetColor()
+    {
+        return Color.HSVToRGB(GetPercentage() / 3, 0.6f, 0.7f);
     }
 }

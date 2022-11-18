@@ -1,8 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Difficulty
+[CreateAssetMenu(menuName = "Difficulty")]
+public class Difficulty : ScriptableObject
 {
-
+    public bool targetMoves;
+    public bool targetRotates;
+    public int startingCount;
+    public bool[] randomizedItems;
 }
