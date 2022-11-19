@@ -47,7 +47,7 @@ public class TargetManager : MonoBehaviour
     {
         while (true)
         {
-            Vector2 position = new(Random.Range(0f, 1920f), Random.Range(0f, 1080f));
+            Vector2 position = new(Random.Range(-960f, 960f), Random.Range(-540f, 540f));
             if (!Physics2D.OverlapCircle(position, 60f)) return position;
         }
     }

@@ -73,7 +73,10 @@ public class Round
         if (status == RoundStatus.Countdown)
             UI.Countdown.Terminate();
         else if (status == RoundStatus.Running)
+        {
+            TargetManager.instance.HideAllTargets();
             UI.Timer.PauseTimer();
+        }
     }
 
     public void Continue()
@@ -81,10 +84,7 @@ public class Round
         if (status == RoundStatus.Countdown || status == RoundStatus.Running)
             UI.Countdown.CountDown(3);
         if (status == RoundStatus.Running)
-        {
-            TargetManager.instance.HideAllTargets();
             UI.Countdown.CountdownFinished += Restart;
-        }
     }
 
     private void Restart()
