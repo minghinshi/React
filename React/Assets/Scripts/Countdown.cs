@@ -17,6 +17,7 @@ public class Countdown : MonoBehaviour
         {
             countsLeft = value;
             text.text = countsLeft.ToString();
+            if (countsLeft != 0) AudioHandler.instance.Play("Tick");
         }
     }
 

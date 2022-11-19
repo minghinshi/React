@@ -40,8 +40,12 @@ public class RoundResultDisplay : MonoBehaviour
 
     public void BindButtonToGame(UnityAction action)
     {
-        nextRoundButton.onClick.RemoveAllListeners();
         nextRoundButton.onClick.AddListener(action);
+    }
+
+    public void UnbindButtonFromGame(UnityAction action)
+    {
+        nextRoundButton.onClick.RemoveListener(action);
     }
 
     private void DisplayDeductLife(string mistakeMessage)

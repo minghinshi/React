@@ -52,12 +52,14 @@ public class Game
     private void EndGame()
     {
         UI.GameOverDisplay.ShowGameResults(Score);
+        UI.RoundResultDisplay.UnbindButtonFromGame(ContinueGame);
         RecordsHandler.records.UpdateRecord(difficulty, Score);
     }
 
     public void ForceEndGame()
     {
         currentRound.RoundCompleted -= OnRoundCompleted;
+        UI.RoundResultDisplay.UnbindButtonFromGame(ContinueGame);
         currentRound.ForceEndRound();
     }
 
@@ -99,18 +101,21 @@ public class Game
         int addedScore = GetAddedScore();
         Score += addedScore;
         level++;
+        AudioHandler.instance.Play("Correct");
         UI.RoundResultDisplay.DisplayCorrect(addedScore);
     }
 
     private void OnIncorrectAnswer()
     {
         Lives--;
+        AudioHandler.instance.Play("Incorrect");
         UI.RoundResultDisplay.DisplayIncorrect();
     }
 
     private void OnTimeOut()
     {
         Lives--;
+        AudioHandler.instance.Play("Incorrect");
         UI.RoundResultDisplay.DisplayOutOfTime();
     }
 
