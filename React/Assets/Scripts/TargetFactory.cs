@@ -29,12 +29,12 @@ public class TargetFactory : MonoBehaviour
         return new(color, modifier, text);
     }
 
-    public Target GetWrongTarget(Target correctTarget)
+    public Target GetTarget(List<Target> excludes)
     {
         while (true)
         {
             Target target = GetTarget();
-            if (!target.Equals(correctTarget)) return target;
+            if (excludes.TrueForAll(x => !x.Equals(target))) return target;
         }
     }
 

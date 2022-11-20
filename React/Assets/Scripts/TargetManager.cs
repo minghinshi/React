@@ -1,12 +1,11 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TargetManager : MonoBehaviour
 {
     public static TargetManager instance;
 
-    [SerializeField] 
-    private ClickableTarget targetPrefab;
+    [SerializeField]
+    private TargetDisplay targetPrefab;
     private Difficulty difficulty;
 
     private void Awake()
@@ -19,9 +18,9 @@ public class TargetManager : MonoBehaviour
         this.difficulty = difficulty;
     }
 
-    public ClickableTarget Spawn(Target target)
+    public TargetDisplay Spawn(Target target)
     {
-        ClickableTarget targetInstance = Instantiate(targetPrefab, GetValidSpawn(), Quaternion.identity, transform);
+        TargetDisplay targetInstance = Instantiate(targetPrefab, GetValidSpawn(), Quaternion.identity, transform);
         targetInstance.SetTarget(target);
         if (difficulty.targetMoves) targetInstance.SetRandomVelocity();
         if (difficulty.targetRotates) targetInstance.SetRandomRotation();
@@ -30,17 +29,20 @@ public class TargetManager : MonoBehaviour
 
     public void ShowAllTargets()
     {
-        foreach (Transform child in transform) child.gameObject.SetActive(true);
+
+        foreach (TargetDisplay display in GetComponentsInChildren<TargetDisplay>()) display.Show();
     }
 
     public void HideAllTargets()
     {
-        foreach (Transform child in transform) child.gameObject.SetActive(false);
+        Physics.autoSimulation = false;
+        foreach (TargetDisplay display in GetComponentsInChildren<TargetDisplay>()) display.Hide();
     }
 
     public void DestroyTargets()
     {
-        foreach (Transform child in transform) Destroy(child.gameObject);
+        foreach (Transform child in transform) 
+            Destroy(child.gameObject);
     }
 
     private Vector2 GetValidSpawn()

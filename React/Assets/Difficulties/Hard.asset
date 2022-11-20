@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hard
   m_EditorClassIdentifier: 
   targetMoves: 1
-  targetRotates: 1
+  targetRotates: 0
   startingCount: 9
-  correctAnswers: 1
-  randomizedItems: 010101
+  correctAnswers: 2
+  randomizedItems: 010100

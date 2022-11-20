@@ -6,12 +6,12 @@ public class GameInterface : MonoBehaviour
 {
     public static GameInterface instance;
 
-    public Countdown Countdown;
     public GameTimer Timer;
-    public ClickableTarget CorrectTargetDisplay;
-    public LivesDisplay livesDisplay;
-    public RoundResultDisplay RoundResultDisplay;
+    public Countdown Countdown;
+    public LivesDisplay LivesDisplay;
     public GameOverDisplay GameOverDisplay;
+    public RoundResultDisplay RoundResultDisplay;
+    public CorrectTargetsDisplay CorrectTargetsDisplay;
 
     public VisibilityHandler RoundIntro;
     public VisibilityHandler MainMenu;

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 public enum RoundResult
 {
     Correct,
@@ -15,23 +18,26 @@ public enum RoundStatus
 public class Round
 {
     private RoundStatus status = RoundStatus.Inactive;
-    private Target correctTarget = TargetFactory.instance.GetTarget();
+    private readonly List<Target> correctTargets = new();
 
-    private float timeLimit;
-    private int spawnCount;
+    private readonly float timeLimit;
+    private readonly int spawnCount;
+    private readonly int correctCount;
 
     public delegate void RoundCompletedHandler(RoundResult result);
     public event RoundCompletedHandler RoundCompleted;
 
     private readonly GameInterface UI = GameInterface.instance;
 
-    public Round(float timeLimit, int spawnCount)
+    public Round(float timeLimit, int spawnCount, int correctCount)
     {
         this.timeLimit = timeLimit;
         this.spawnCount = spawnCount;
+        this.correctCount = correctCount;
 
+        SetCorrectTargets();
         UI.GameplayInfoPanels.SwitchPanel(UI.RoundIntro);
-        UI.CorrectTargetDisplay.SetTarget(correctTarget);
+        UI.CorrectTargetsDisplay.DisplayTargets(correctTargets);
     }
 
     public void StartCountdown()
@@ -51,12 +57,13 @@ public class Round
         UI.Timer.TimerEnded += TimeOut;
     }
 
-    private void EndRound()
+    private void EndRound(RoundResult result)
     {
         status = RoundStatus.Inactive;
         UI.Timer.PauseTimer();
         UI.Timer.TimerEnded -= TimeOut;
         TargetManager.instance.DestroyTargets();
+        RoundCompleted?.Invoke(result);
     }
 
     public void ForceEndRound()
@@ -94,32 +101,58 @@ public class Round
         UI.Countdown.CountdownFinished -= Restart;
     }
 
+    private void SetCorrectTargets()
+    {
+        for (int i = 0; i < correctCount; i++)
+        {
+            Target target = TargetFactory.instance.GetTarget(correctTargets);
+            correctTargets.Add(target);
+        }
+    }
+
     private void GenerateTargets()
     {
-        GenerateTarget(correctTarget);
-        for (int i = 0; i < spawnCount - 1; i++)
+        correctTargets.ForEach(GenerateTarget);
+        for (int i = 0; i < spawnCount - correctCount; i++)
         {
-            Target incorrectTarget = TargetFactory.instance.GetWrongTarget(correctTarget);
-            GenerateTarget(incorrectTarget);
+            Target target = TargetFactory.instance.GetTarget(correctTargets);
+            GenerateTarget(target);
         }
     }
 
     private void GenerateTarget(Target target)
     {
-        ClickableTarget targetInstance = TargetManager.instance.Spawn(target);
+        TargetDisplay targetInstance = TargetManager.instance.Spawn(target);
         targetInstance.SetClickAction(() => SubmitAnswer(target));
+        targetInstance.SetClickAction(() => Object.Destroy(targetInstance.gameObject));
     }
 
     private void SubmitAnswer(Target target)
     {
-        EndRound();
-        if (target.Equals(correctTarget)) RoundCompleted?.Invoke(RoundResult.Correct);
-        else RoundCompleted?.Invoke(RoundResult.Incorrect);
+        if (IsTargetCorrect(target))
+        {
+            AudioHandler.instance.Play("Correct");
+            if (correctTargets.Count == 0)
+                EndRound(RoundResult.Correct);
+        }
+        else EndRound(RoundResult.Incorrect);
     }
 
     private void TimeOut()
     {
-        EndRound();
-        RoundCompleted?.Invoke(RoundResult.TimedOut);
+        EndRound(RoundResult.TimedOut);
+    }
+
+    private bool IsTargetCorrect(Target target)
+    {
+        foreach (Target correctTarget in correctTargets)
+        {
+            if (target.Equals(correctTarget))
+            {
+                correctTargets.Remove(correctTarget);
+                return true;
+            }
+        }
+        return false;
     }
 }

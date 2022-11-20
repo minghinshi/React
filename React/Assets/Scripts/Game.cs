@@ -27,7 +27,7 @@ public class Game
         set
         {
             lives = value;
-            UI.livesDisplay.ShowLives(value);
+            UI.LivesDisplay.ShowLives(value);
         }
     }
 
@@ -65,7 +65,7 @@ public class Game
 
     private void GenerateNewRound()
     {
-        currentRound = new(GetRoundTime(), level + difficulty.startingCount);
+        currentRound = new(GetRoundTime(), level + difficulty.startingCount, difficulty.correctAnswers);
         currentRound.RoundCompleted += OnRoundCompleted;
     }
 
@@ -101,7 +101,6 @@ public class Game
         int addedScore = GetAddedScore();
         Score += addedScore;
         level++;
-        AudioHandler.instance.Play("Correct");
         UI.RoundResultDisplay.DisplayCorrect(addedScore);
     }
 
