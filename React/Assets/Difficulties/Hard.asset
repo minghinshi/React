@@ -15,4 +15,5 @@ MonoBehaviour:
   targetMoves: 1
   targetRotates: 1
   startingCount: 9
+  correctAnswers: 1
   randomizedItems: 010101
