@@ -65,7 +65,7 @@ public class Game
 
     private void GenerateNewRound()
     {
-        currentRound = new(GetRoundTime(), level + difficulty.startingCount, difficulty.correctAnswers);
+        currentRound = new(GetRoundTime(), GetTargetCount(), difficulty.correctAnswers);
         currentRound.RoundCompleted += OnRoundCompleted;
     }
 
@@ -121,5 +121,10 @@ public class Game
     private float GetRoundTime()
     {
         return 60f / Mathf.Pow(1 + level * 0.414f, 2);
+    }
+
+    private int GetTargetCount()
+    {
+        return level + difficulty.startingCount;
     }
 }
